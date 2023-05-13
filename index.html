@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script>
+function randInt(beginning,end) {
+    return  beginning+Math.floor(Math.random()*(end-beginning));
+}
+function newProblem() {
+    var firstNumberDiv = document.getElementById('firstNumber');
+    // Addition
+    //firstNumber = randInt(2,10);
+    //secondNumber = randInt(Math.max(firstNumber+2,5),13)-firstNumber;
+    //firstNumberDiv.textContent = firstNumber+" + "+secondNumber;
+    // Subtraction     
+    firstNumber = randInt(2,13);
+    secondNumber = randInt(Math.max(firstNumber-5,0),firstNumber);
+    firstNumberDiv.textContent = firstNumber+" - "+secondNumber;
+    console.log("New Problem: "+firstNumberDiv.textContent);
+    var answerDiv = document.getElementById('answer');
+    answerDiv.textContent = "";
+    isRight = false;
+    if(goalMet) {
+        var numRightDiv = document.getElementById('numRight');
+        numRightDiv.textContent = "";
+    }    
+    clear();
+}
+function clear() {
+    var d = new Date();
+    lastClear = d.getTime();
+}
+
+var numRightGoal = 30;
+
+var firstNumber;
+var secondNumber;
+var numRight = 0;
+var goalMet = false;
+var isRight = false;
+
+var lastClear;
+
+window.onload = function() {
+    newProblem();
+}
+
+document.onkeyup = function(event) {
+    console.log("key:"+event.key);
+    var answerDiv = document.getElementById('answer');
+    var numRightDiv = document.getElementById('numRight');
+    if(event.key === "Backspace") {
+       var d = new Date();
+       let tryClear = d.getTime();
+       console.log("Time since last clear:"+(tryClear - lastClear));
+
+       if((tryClear - lastClear) <2000) {
+           clear();
+           answerDiv.textContent = "Please think for two seconds between guesses";
+       } else {
+           clear();
+           answerDiv.textContent = "";
+       }     
+    } else if(event.key === "Enter") {
+	 if(!isRight) {
+           answer.textContent = "Keep trying!";
+       } else {
+           newProblem();
+       }
+    } else {
+       answerDiv.append(event.key);
+    }
+//    Addition
+//    if(!isRight && answerDiv.textContent === (firstNumber + secondNumber).toString()) {
+//    Subtraction
+    if(!isRight && answerDiv.textContent === (firstNumber - secondNumber).toString()) {
+        answerDiv.textContent = "You got it right!";
+        numRight += 1;
+        isRight = true;
+        numRightDiv.textContent = "# right: "+((numRight-1)%numRightGoal+1);
+        if(numRight > 0 && numRight % numRightGoal == 0 && !goalMet) {
+            answerDiv.textContent = "You got "+numRightGoal+" right! Good work!";
+            goalMet = true;
+        } else {
+            goalMet = false;
+        }
+    }
+};
+
+</script>
+<style>
+* {
+   color:purple;
+   font-weight: bold;
+}
+body {
+   font-size: 2em;
+   margin: 5em;
+} 
+</style>
+</head>
+<body>
+<h1>Hi! Welcome to Purple Keys!</h1>
+<p id="firstNumber">Something is broken. Ask Daddy for help.</p>
+<p><span id="answer"></span>&nbsp;</p>
+<p id="numRight"></p>
+</body>
